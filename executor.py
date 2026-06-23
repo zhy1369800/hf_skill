@@ -34,10 +34,19 @@ class MCPClient:
     
     def _post(self, data, headers=None):
         """Make a POST request using urllib."""
-        req_headers = {"Content-Type": "application/json"}
+        req_headers = {
+            "Content-Type": "application/json",
+            "User-Agent": "Mozilla/5.0 (iPhone; CPU iPhone OS 17_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Minis/1.0",
+            "Accept": "application/json"
+        }
         if headers:
             req_headers.update(headers)
-        
+
+        # Use FILESYSTEM_MCP_TOKEN for authorization
+        token = os.environ.get("HF_MCP_TOKEN")
+        if token:
+            req_headers["Authorization"] = f"Bearer {token}"
+            
         request = urllib.request.Request(
             self.base_url,
             data=json.dumps(data).encode('utf-8'),
@@ -66,9 +75,12 @@ class MCPClient:
             }
         })
         
-        self.session_id = headers.get("Mcp-Session-Id")
+        self.session_id = headers.get("Mcp-Session-Id") or headers.get("mcp-session-id")
         if not self.session_id:
-            raise Exception("No session ID in response")
+            # Fallback: if server doesn't return ID, it might be a single-shot session or handle it differently
+            if body.get("result"):
+                return body
+            raise Exception(f"No session ID in response. Headers: {headers}")
         
         return body
     
