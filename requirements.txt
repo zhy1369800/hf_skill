@@ -1,0 +1,2 @@
+# Optional: for YAML output in refresh_tool_docs.py
+# pyyaml>=6.0

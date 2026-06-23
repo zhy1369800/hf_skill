@@ -1,0 +1,7 @@
+{
+  "mcpServers": {
+    "hf": {
+      "url": "http://localhost:3000/proxy/hf/mcp?key=e7a409e9b65d4d65861ab0b90672c716"
+    }
+  }
+}
