@@ -37,7 +37,7 @@ class MCPClient:
         req_headers = {
             "Content-Type": "application/json",
             "User-Agent": "Mozilla/5.0 (iPhone; CPU iPhone OS 17_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Minis/1.0",
-            "Accept": "application/json"
+            "Accept": "application/json, text/event-stream"
         }
         if headers:
             req_headers.update(headers)
