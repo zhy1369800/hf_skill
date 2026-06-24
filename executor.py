@@ -56,7 +56,24 @@ class MCPClient:
         
         with urllib.request.urlopen(request) as response:
             response_headers = dict(response.headers)
-            body = json.loads(response.read().decode('utf-8'))
+            content_type = response_headers.get("Content-Type", "")
+            raw_data = response.read().decode('utf-8')
+            
+            if "text/event-stream" in content_type:
+                # Handle SSE: Extract the last data line
+                lines = raw_data.split('\n')
+                json_data = None
+                for line in lines:
+                    if line.startswith("data: "):
+                        try:
+                            json_data = json.loads(line[6:])
+                        except:
+                            continue
+                if json_data:
+                    return json_data, response_headers
+                raise Exception(f"Failed to parse SSE data: {raw_data}")
+            
+            body = json.loads(raw_data)
             return body, response_headers
     
     def initialize(self):
